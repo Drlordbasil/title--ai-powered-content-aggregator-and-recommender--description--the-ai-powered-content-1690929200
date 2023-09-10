@@ -46,7 +46,8 @@ class Recommender:
 
     def preprocess_text(self, text):
         tokens = word_tokenize(text.lower())
-        filtered_tokens = [token for token in tokens if token.isalnum() and token not in self.stopwords]
+        filtered_tokens = [
+            token for token in tokens if token.isalnum() and token not in self.stopwords]
         return ' '.join(filtered_tokens)
 
     def calculate_similarity(self, query):
@@ -100,27 +101,32 @@ class ContentRecommendationSystem:
 
         self.recommender = Recommender(self.content_aggregator.content)
 
-        self.user_profiles = UserProfile.load_profile(self.user_profiles_filename)
+        self.user_profiles = UserProfile.load_profile(
+            self.user_profiles_filename)
 
     def recommend_content(self, username, query):
         if username not in self.user_profiles:
             self.user_profiles[username] = UserProfile(username)
 
         similarities = self.recommender.calculate_similarity(query)
-        content_indices = sorted(range(len(similarities)), key=lambda i: similarities[i], reverse=True)
-        recommended_content = [self.content_aggregator.content[idx] for idx in content_indices]
+        content_indices = sorted(
+            range(len(similarities)), key=lambda i: similarities[i], reverse=True)
+        recommended_content = [self.content_aggregator.content[idx]
+                               for idx in content_indices]
 
         return recommended_content
 
     def rate_content(self, username, preference, rating):
         if username in self.user_profiles:
             self.user_profiles[username].add_preference(preference, rating)
-            self.user_profiles[username].save_profile(self.user_profiles_filename)
+            self.user_profiles[username].save_profile(
+                self.user_profiles_filename)
 
     def clear_user_preferences(self, username):
         if username in self.user_profiles:
             self.user_profiles[username].clear_preferences()
-            self.user_profiles[username].save_profile(self.user_profiles_filename)
+            self.user_profiles[username].save_profile(
+                self.user_profiles_filename)
 
     def get_user_preferences(self, username):
         if username in self.user_profiles:
@@ -165,7 +171,8 @@ def main():
     content_filename = 'content.pickle'
     user_profiles_filename = 'user_profiles.pickle'
 
-    system = ContentRecommendationSystem(content_filename, user_profiles_filename)
+    system = ContentRecommendationSystem(
+        content_filename, user_profiles_filename)
     system.initialize_system()
     system.recommendation_interface()
 
